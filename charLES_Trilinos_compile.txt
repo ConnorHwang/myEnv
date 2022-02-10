@@ -1,0 +1,17 @@
+rm -r metis
+rm -r parmetis
+rm -r trilinos
+cd parmetis-4.0.3/metis
+make config prefix=/home/moin/hanul/metis
+make -j8
+make -j8 install
+cd ..
+make config prefix=/home/moin/hanul/parmetis
+make -j8 
+make -j8 install
+cd ~/trilinos_source
+rm -r build
+./do_configure
+cd build
+make -j8
+make -j8 install
