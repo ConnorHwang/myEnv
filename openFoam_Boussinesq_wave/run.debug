@@ -1,0 +1,63 @@
+#!/bin/bash
+
+#SBATCH -J cnoidal_tutorial
+#SBATCH -o log.out
+#SBATCH -p pdebug
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=32
+#SBATCH -t 01:00:00
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=hanul@stanford.edu
+
+###WORKDIR='/p/lustre2/hwang8/nicke/cnoidal'
+###export WORKDIR
+### ---------------------------------------
+### BEGINNING OF EXECUTION
+### ---------------------------------------
+
+echo The master node of this job is `hostname`
+echo This job runs on the following nodes:
+echo `scontrol show hostname $SLURM_JOB_NODELIST`
+echo "Starting at `date`"
+echo "Running on hosts: $SLURM_NODELIST"
+echo "Running on $SLURM_NNODES nodes."
+echo "Running on $SLURM_NPROCS processors."
+###echo "Current working directory is `echo $WORKDIR`"
+echo
+echo Output from code
+echo ----------------
+
+# module
+module purge
+module load intel
+module load openmpi
+source /g/g92/hwang8/ihfoam/OpenFOAM-v2112/etc/bashrc
+
+# Run your commends
+#cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+
+## Restore 0/ directory
+#restore0Dir
+#
+## Generate background mesh
+#runApplication blockMesh
+#
+## Decompose and mesh
+#runApplication snappyHexMesh -overwrite
+#runApplication extrudeMesh
+#runApplication checkMesh
+#runApplication decomposePar #-force
+#
+## Set initial conditions
+#runParallel setFields
+
+# Parallel run
+runParallel $(getApplication) 
+
+# ./Allclean
+#cp -r 0.orig/ 0
+#blockMesh
+#decomposePar
+#setFields
+#mpirun -np 2 interFoam -parallel
